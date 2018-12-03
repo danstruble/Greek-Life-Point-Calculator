@@ -1,6 +1,14 @@
 def userVerification(enteredUser):
-    ah = open("admins.txt")
-    uh = open("users.txt")
+    try:
+        ah = open("admins.txt")
+    except FileNotFoundError:
+        print("Missing admins file, check to make sure you have everything in the right directory")
+        quit()
+    try:
+        uh = open("users.txt")
+    except FileNotFoundError:
+        print("Missing users file, check to make sure you have everything in the right directory")
+        quit()
 
     adminList = ah.read()
     userList = uh.read()
@@ -16,28 +24,33 @@ def userVerification(enteredUser):
         return 0
 
 def loadApprovedEvents():
-    eh = open ("approvedevents.txt")
-
-    approvedEvents = eh.readlines()
+    try:
+        eh = open ("approvedevents.txt")
+        approvedEvents = eh.read()
+    except FileNotFoundError:
+        approvedEvents = {}
 
     return approvedEvents
 
 def saveApprovedEvents():
-    print("not done")
+    with open('approvedevents.txt', 'w') as file:
+        file.write(approvedEvents)
 
 def eventEntry():
     event = []
 
-    eventName = input("Enter event name")
-    eventDate = input("Enter event date")
-    eventPoints = input("Enter event points")
+    eventName = input("Enter event name: ")
+    eventDate = input("Enter event date: ")
+    eventPoints = input("Enter event points: ")
 
     event.insert(0, eventDate)
     event.insert(1, eventPoints)
 
-    if input("You entered '%s', on '%s', for '%s' points, is this correct(type 'yes' if it is)?" % (
+    if input("You entered '%s', on '%s', for '%s' points, is this correct(type 'yes' if it is)?: " % (
     eventName, eventDate, eventPoints)).lower() == "yes":
         approvedEvents[eventName] = event
+
+    print(approvedEvents)
 
 def attendedEvent(username):
     print("not done")
@@ -55,18 +68,20 @@ def displayCommands(privLevel):
         print("Enter 'stats' to view statistics")
     if privLevel >= 1:
         print("Enter 'attend' to enter attendance")
-        return(input("Enter command to execute: "))
-    if privLevel == 0:
-        print("Incorrect name, either you entered your name incorrectly, or you aren't in the system")
-        quit()
+
+
+approvedEvents = {}
+attendance = {}
+done = False
+
 
 print("Welcome to the Greek Life Point Calculator")
-
+loadApprovedEvents()
 # Login handler
 username = input("Please enter your name: ").title()
+print(username)
 privLevel = userVerification(username)
 
-done = False
 
 # User input loop
 
@@ -75,8 +90,10 @@ if privLevel == 0:
 else:
     while not done:
         displayCommands(privLevel)
-        usrInput = input("Enter command to begin, or 'done' to finish")
-        if usrInput == "event" and privLevel >= 2:
+        usrInput = input("Enter command to begin, or 'done' to finish: ").lower()
+        if usrInput == "done":
+            done = True
+        elif usrInput == "event" and privLevel >= 2:
             eventEntry()
         elif usrInput == "stats" and privLevel >= 2:
             displayStats()
@@ -85,7 +102,5 @@ else:
         else:
             print("Incorrect command or incorrect permission level.")
 
-approvedEvents = {}
-attendance = {}
 
 

@@ -1,3 +1,5 @@
+import ast
+
 def userVerification(enteredUser):
     try:
         ah = open("admins.txt")
@@ -26,31 +28,37 @@ def userVerification(enteredUser):
 def loadApprovedEvents():
     try:
         eh = open ("approvedevents.txt")
-        approvedEvents = eh.read()
+        approvedEvents = ast.literal_eval(eh.read())
     except FileNotFoundError:
         approvedEvents = {}
 
     return approvedEvents
 
 def saveApprovedEvents():
-    with open('approvedevents.txt', 'w') as file:
-        file.write(approvedEvents)
+    with open('approvedevents.txt', 'w+') as file:
+        file.write(str(approvedEvents))
 
 def eventEntry():
-    event = []
+    finished = False
+    while not finished:
+        event = []
 
-    eventName = input("Enter event name: ")
-    eventDate = input("Enter event date: ")
-    eventPoints = input("Enter event points: ")
+        eventName = input("Enter event name: ")
+        eventDate = input("Enter event date: ")
+        eventPoints = input("Enter event points: ")
 
-    event.insert(0, eventDate)
-    event.insert(1, eventPoints)
+        event.insert(0, eventDate)
+        event.insert(1, eventPoints)
 
-    if input("You entered '%s', on '%s', for '%s' points, is this correct(type 'yes' if it is)?: " % (
-    eventName, eventDate, eventPoints)).lower() == "yes":
-        approvedEvents[eventName] = event
+        if input("You entered '%s', on '%s', for '%s' points, is this correct(type 'yes' if it is)?: " % (
+        eventName, eventDate, eventPoints)).lower() == "yes":
+            approvedEvents[eventName] = event
 
-    print(approvedEvents)
+        print(approvedEvents)
+
+        if input("Type 'done' to finish, or hit enter to continue entering other events: ").lower() == "done":
+            finished = True
+            saveApprovedEvents()
 
 def attendedEvent(username):
     print("not done")
@@ -70,13 +78,13 @@ def displayCommands(privLevel):
         print("Enter 'attend' to enter attendance")
 
 
-approvedEvents = {}
+approvedEvents = loadApprovedEvents()
+print(approvedEvents)
 attendance = {}
 done = False
 
 
 print("Welcome to the Greek Life Point Calculator")
-loadApprovedEvents()
 # Login handler
 username = input("Please enter your name: ").title()
 print(username)

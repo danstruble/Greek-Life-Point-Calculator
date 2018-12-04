@@ -28,6 +28,7 @@ def userVerification(enteredUser):
     else:
         return 0
 
+
 # This function loads the approved events dictionary from a text file, and does a literal evaluation to turn the string
 # into a dictionary. Also contains a fail safe if file does not exist or contains not a dictionary
 def loadApprovedEvents():
@@ -73,7 +74,7 @@ def eventEntry():
         event = []
 
         eventName = input("Enter event name: ")
-        eventDate = input("Enter event date: ")
+        eventDate = input("Enter event date (mm/dd/yy): ")
         eventPoints = input("Enter event points: ")
 
         event.insert(0, eventName)
@@ -135,7 +136,7 @@ def searchEvents():
         print("No events found with that search")
     else:
         for result in results:
-            print("%i  |  %s  |  %s" %(result,approvedEvents[result][0],approvedEvents[result][1]))
+            print("%i  |  %s  |  %s" %(result, approvedEvents[result][0], approvedEvents[result][1]))
 
 
 # This function allows administrators to tweak other user's attendance
@@ -148,7 +149,7 @@ def attendedEvent(username):
     if userVerification(username) >= 2:
         usrInput = input("Would you like to modify user attendance?: ")
         if usrInput.lower() == "yes":
-            print("wait")
+            print("not finished yet")
     while not finished:
         usrInput = input("Enter the event ID, hit enter to search for events, or 'done' to finish: ")
         if usrInput.lower() == "done":
@@ -175,7 +176,6 @@ def attendedEvent(username):
 
             except ValueError:
                 searchEvents()
-        print(attendedEvents)
 
 # This function displays attendance stats, allowing admins to search for users or run a report for all users
 # Regular users will be able to see their own stats.

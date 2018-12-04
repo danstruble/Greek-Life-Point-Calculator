@@ -1,5 +1,8 @@
 import ast
 
+# This function checks if the entered username is in either the user or admin file, and assigns a privilege level.
+# This function also uses try excepts to ensure that the program doesn't break if you are missing the required files
+# This will notify the user of the file that they are missing.
 def userVerification(enteredUser):
     try:
         ah = open("admins.txt")
@@ -25,6 +28,8 @@ def userVerification(enteredUser):
     else:
         return 0
 
+# This function loads the approved events dictionary from a text file, and does a literal evaluation to turn the string
+# into a dictionary
 def loadApprovedEvents():
     try:
         eh = open ("approvedevents.txt")
@@ -34,10 +39,12 @@ def loadApprovedEvents():
 
     return approvedEvents
 
+# This function saves the approved event dictionary into a text file by turning it into a string
 def saveApprovedEvents():
     with open('approvedevents.txt', 'w+') as file:
         file.write(str(approvedEvents))
 
+# This function allows you to enter approved event information into the approved events dictionary
 def eventEntry():
     finished = False
     while not finished:
@@ -60,15 +67,17 @@ def eventEntry():
             finished = True
             saveApprovedEvents()
 
+# This function adds the event key to a list in a person's dictonary entry to show event attendance
 def attendedEvent(username):
     print("not done")
 
-def verifyEvent():
-    print("not done")
-
+# This function displays attendance stats, allowing admins to search for users or run a report for all users
+# Regular users will be able to see their own stats.
 def displayStats():
     print("not done")
 
+# This function displays commands for the highest privilege level, and displays lower privilege level commands that the
+# user can also use
 def displayCommands(privLevel):
 
     if privLevel >= 2:

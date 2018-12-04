@@ -29,12 +29,15 @@ def userVerification(enteredUser):
         return 0
 
 # This function loads the approved events dictionary from a text file, and does a literal evaluation to turn the string
-# into a dictionary
+# into a dictionary. Also contains a fail safe if file does not exist or contains not a dictionary
 def loadApprovedEvents():
     try:
         eh = open ("approvedevents.txt")
         approvedEvents = ast.literal_eval(eh.read())
     except FileNotFoundError:
+        approvedEvents = {}
+
+    if not isinstance(approvedEvents, dict):
         approvedEvents = {}
 
     return approvedEvents
@@ -43,6 +46,24 @@ def loadApprovedEvents():
 def saveApprovedEvents():
     with open('approvedevents.txt', 'w+') as file:
         file.write(str(approvedEvents))
+
+# Utilizes same method for approved events to load attended events dictionary from a text file, and evaluate it from a
+# string to a dictionary. Also contains a fail safe if file does not exist or contains not a dictionary
+def loadAttendedEvents():
+    try:
+        eh = open ("attendedevents.txt")
+        attendedEvents = ast.literal_eval(eh.read())
+    except FileNotFoundError:
+        attendedEvents = {}
+
+    if not isinstance(attendedEvents, dict):
+        attendedEvents = {}
+    return attendedEvents
+
+# Utilizes same save method as above to save the attended dictionary to a text file
+def saveAttendedEvents():
+    with open('attendedevents.txt', 'w+') as file:
+        file.write(str(attendedEvents))
 
 # This function allows you to enter approved event information into the approved events dictionary
 def eventEntry():
@@ -115,7 +136,8 @@ def searcbEvents(nIndex, dIndex):
             print("%i  |  %s  |  %s" %(result,approvedEvents[result][0],approvedEvents[result][1]))
 
 
-# This function adds the event key to a list in a person's dictonary entry to show event attendance
+# This function adds the event key to a list in a person's dictionary
+#  entry to show event attendance
 def attendedEvent(username):
     print("not done")
 
@@ -141,7 +163,7 @@ approvedEvents = loadApprovedEvents()
 nameIndex = indexEvents()[0]
 dateIndex = indexEvents()[1]
 print(approvedEvents)
-attendance = {}
+attendedEvents = loadAttendedEvents()
 done = False
 
 

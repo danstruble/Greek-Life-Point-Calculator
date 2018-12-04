@@ -1,0 +1,1 @@
+{0: ['Dough', '11/20/18', '1'], 1: ['Sweets', '11/22/18', '2'], 2: ['Greek Life', '09/12/18', '1'], 3: ['Cookie Dough Fund Raiser', '10/01/18', '1'], 4: ['Greek Thon', '11/01/18', '1'], 5: ['Thanksgiving Dinner', '11/22/18', '1']}

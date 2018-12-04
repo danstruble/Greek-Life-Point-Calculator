@@ -54,18 +54,66 @@ def eventEntry():
         eventDate = input("Enter event date: ")
         eventPoints = input("Enter event points: ")
 
-        event.insert(0, eventDate)
-        event.insert(1, eventPoints)
+        event.insert(0, eventName)
+        event.insert(1, eventDate)
+        event.insert(2, eventPoints)
 
         if input("You entered '%s', on '%s', for '%s' points, is this correct(type 'yes' if it is)?: " % (
         eventName, eventDate, eventPoints)).lower() == "yes":
-            approvedEvents[eventName] = event
+            approvedEvents[len(approvedEvents)] = event
 
         print(approvedEvents)
 
         if input("Type 'done' to finish, or hit enter to continue entering other events: ").lower() == "done":
             finished = True
             saveApprovedEvents()
+
+# This populates the index dictionaries to search for events
+def indexEvents():
+    nameIndex = {}
+    dateIndex = {}
+
+    # Main indexing for loop
+    for entry in approvedEvents:
+        terms = approvedEvents[entry][0].lower().split()
+        date = approvedEvents[entry][1]
+        # Indexes by name
+        for term in terms:
+            if term not in nameIndex:
+                nameIndex[term] = [entry]
+            else:
+                currentEntry = nameIndex[term]
+                currentEntry.append(entry)
+                nameIndex[term] = currentEntry
+
+        # Indexes by date
+        if date not in dateIndex:
+            dateIndex[date] = [entry]
+        else:
+            currentDates = dateIndex[date]
+            currentDates.append(entry)
+            dateIndex[date] = currentDates
+
+    return [nameIndex,dateIndex]
+
+# This function allows users to search for events by date or search term
+def searcbEvents(nIndex, dIndex):
+    searchTerm = input("Enter term to search for, or date (mm/dd/yy): ").lower()
+    results = []
+
+    for term in nIndex:
+        if searchTerm == term:
+            results = nIndex[term]
+    for date in dIndex:
+        if searchTerm == date:
+            results = dIndex[date]
+
+    if len(results) < 1:
+        print("No events found with that search")
+    else:
+        for result in results:
+            print("%i  |  %s  |  %s" %(result,approvedEvents[result][0],approvedEvents[result][1]))
+
 
 # This function adds the event key to a list in a person's dictonary entry to show event attendance
 def attendedEvent(username):
@@ -85,9 +133,13 @@ def displayCommands(privLevel):
         print("Enter 'stats' to view statistics")
     if privLevel >= 1:
         print("Enter 'attend' to enter attendance")
+        print("Enter 'search' to search events")
 
+# Startup
 
 approvedEvents = loadApprovedEvents()
+nameIndex = indexEvents()[0]
+dateIndex = indexEvents()[1]
 print(approvedEvents)
 attendance = {}
 done = False
@@ -116,6 +168,8 @@ else:
             displayStats()
         elif usrInput == "attend" and privLevel >= 1:
             attendedEvent(username)
+        elif usrInput == "search" and privLevel >= 1:
+            searcbEvents(nameIndex,dateIndex)
         else:
             print("Incorrect command or incorrect permission level.")
 

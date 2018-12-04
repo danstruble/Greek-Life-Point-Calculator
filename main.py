@@ -64,6 +64,7 @@ def loadAttendedEvents():
 def saveAttendedEvents():
     with open('attendedevents.txt', 'w+') as file:
         file.write(str(attendedEvents))
+    print("done")
 
 # This function allows you to enter approved event information into the approved events dictionary
 def eventEntry():
@@ -88,6 +89,7 @@ def eventEntry():
         if input("Type 'done' to finish, or hit enter to continue entering other events: ").lower() == "done":
             finished = True
             saveApprovedEvents()
+            indexEvents()
 
 # This populates the index dictionaries to search for events
 def indexEvents():
@@ -118,16 +120,16 @@ def indexEvents():
     return [nameIndex,dateIndex]
 
 # This function allows users to search for events by date or search term
-def searcbEvents(nIndex, dIndex):
+def searchEvents():
     searchTerm = input("Enter term to search for, or date (mm/dd/yy): ").lower()
     results = []
 
-    for term in nIndex:
+    for term in nameIndex:
         if searchTerm == term:
-            results = nIndex[term]
-    for date in dIndex:
+            results = nameIndex[term]
+    for date in dateIndex:
         if searchTerm == date:
-            results = dIndex[date]
+            results = dateIndex[date]
 
     if len(results) < 1:
         print("No events found with that search")
@@ -136,10 +138,44 @@ def searcbEvents(nIndex, dIndex):
             print("%i  |  %s  |  %s" %(result,approvedEvents[result][0],approvedEvents[result][1]))
 
 
-# This function adds the event key to a list in a person's dictionary
-#  entry to show event attendance
+# This function allows administrators to tweak other user's attendance
+# Main intention of this function is to prompt user for event ID, or search for an event using the indexed criteria
+# Which appends the event id to the key value pair associated with the person's name
+# Uses try excepts as an interesting approach to handle different data types being entered in one prompt
 def attendedEvent(username):
-    print("not done")
+    finished = False
+
+    if userVerification(username) >= 2:
+        usrInput = input("Would you like to modify user attendance?: ")
+        if usrInput.lower() == "yes":
+            print("wait")
+    while not finished:
+        usrInput = input("Enter the event ID, hit enter to search for events, or 'done' to finish: ")
+        if usrInput.lower() == "done":
+            finished = True
+            saveAttendedEvents()
+        else:
+            try:
+                key = int(usrInput)
+
+                if key in approvedEvents:
+                    if username in attendedEvents:
+                        if key in attendedEvents[username]:
+                            usrInput = input("You already have attended this event, would you like to delete your attendance for this event?: ")
+                            if usrInput.lower() == "yes":
+                                attendedEvents[username].remove(key)
+                        else:
+                            currentList = attendedEvents[username]
+                            currentList.append(key)
+                            attendedEvents[username] = currentList
+                    else:
+                        attendedEvents[username] = [key]
+                else:
+                    print("Incorrect event ID, try again.")
+
+            except ValueError:
+                searchEvents()
+        print(attendedEvents)
 
 # This function displays attendance stats, allowing admins to search for users or run a report for all users
 # Regular users will be able to see their own stats.
@@ -191,7 +227,7 @@ else:
         elif usrInput == "attend" and privLevel >= 1:
             attendedEvent(username)
         elif usrInput == "search" and privLevel >= 1:
-            searcbEvents(nameIndex,dateIndex)
+            searchEvents()
         else:
             print("Incorrect command or incorrect permission level.")
 

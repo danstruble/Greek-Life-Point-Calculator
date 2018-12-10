@@ -1,4 +1,6 @@
 import ast
+import pandas as pd
+import matplotlib as plt
 
 # This function checks if the entered username is in either the user or admin file, and assigns a privilege level.
 # This function also uses try excepts to ensure that the program doesn't break if you are missing the required files
@@ -135,6 +137,7 @@ def searchEvents():
     if len(results) < 1:
         print("No events found with that search")
     else:
+        print("ID\t| Name\t| Date")
         for result in results:
             print("%i  |  %s  |  %s" %(result, approvedEvents[result][0], approvedEvents[result][1]))
 
@@ -149,7 +152,31 @@ def attendedEvent(username):
     if userVerification(username) >= 2:
         usrInput = input("Would you like to modify user attendance?: ")
         if usrInput.lower() == "yes":
-            print("not finished yet")
+            while not finished:
+                user = input("Enter user to modify: ").title()
+                if user.lower() == "done":
+                    finished = True
+                elif userVerification(user) < 1:
+                    print("Incorrect user, try again.")
+                else:
+                    # show stats here
+                    usrInput = input("Would you like to 'add' or 'delete' attendance for %s? or 'done' to finish: " %(user))
+
+                    if usrInput.lower() == "done":
+                        finished = True
+                        saveAttendedEvents()
+
+                    elif usrInput.lower() == "add":
+                        attendedEvent(user)
+
+                    elif usrInput.lower() == "delete":
+                        print(attendedEvents[user])
+                        usrInput = int(input("Specify an event to delete: "))
+                        if usrInput in attendedEvents[user]:
+                            attendedEvents[user].remove(usrInput)
+                        else:
+                            print("Incorrect event ID")
+
     while not finished:
         usrInput = input("Enter the event ID, hit enter to search for events, or 'done' to finish: ")
         if usrInput.lower() == "done":
@@ -187,7 +214,7 @@ def displayStats():
 def displayCommands(privLevel):
 
     if privLevel >= 2:
-        print("Enter 'event' to create/delete/modify an event")
+        print("Enter 'event' to create an event")
         print("Enter 'stats' to view statistics")
     if privLevel >= 1:
         print("Enter 'attend' to enter attendance")
